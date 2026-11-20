@@ -115,7 +115,9 @@ def texto(valor: Any) -> str:
 def fecha_iso(valor: Any) -> str:
     if isinstance(valor, (datetime, date, pd.Timestamp)):
         return valor.strftime("%Y-%m-%d")
-    convertido = pd.to_datetime(str(valor).strip(), dayfirst=True, errors="coerce")
+    bruto = str(valor).strip()
+    es_iso = bool(re.match(r"^\d{4}-\d{2}-\d{2}(?:$|[ T])", bruto))
+    convertido = pd.to_datetime(bruto, dayfirst=not es_iso, errors="coerce")
     if pd.isna(convertido):
         return texto(valor)
     return convertido.strftime("%Y-%m-%d")
