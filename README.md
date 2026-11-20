@@ -54,4 +54,23 @@ locales sensibles. La tabla de códigos se entrega a Coordinación por un canal 
 nunca se sube a Git. No se deben incluir exportaciones reales, tablas de códigos ni datos
 de clientes en las pruebas o en el control de versiones.
 
+## Wiki Técnica Estructurada (Obsidian & RAG)
+
+La base de conocimiento enriquecida se organiza en `wiki/` y está diseñada para navegación
+en Obsidian y consultas mediante RAG (Claude 3.5 Sonnet, DeepSeek V3):
+
+- **Arquitectura y Taxonomía**: especificada en `docs/esquema/ESQUEMA_GENERAL.md`.
+- **Reglas de Nombres, Enlaces y Citas**: detalladas en `docs/esquema/REGLAS_NOMENCLATURA_ENLACES_CITAS.md`.
+- **Plantillas Maestras**: disponibles en `wiki/_templates/` para reportes (`REP-`), equipos (`EQP-`), fallas (`FAL-`), MOCs (`MOC-`) y resúmenes (`RES-`).
+- **Flujos Operativos (SOPs)**:
+  - Ingesta asistida por LLMs: `docs/esquema/SOP_INGESTA.md`.
+  - Consulta y recuperación RAG: `docs/esquema/SOP_CONSULTA.md`.
+  - Revisión y control de calidad: `docs/esquema/SOP_REVISION.md`.
+
+Para auditar la integridad del grafo, sintaxis YAML, links rotos y páginas huérfanas:
+
+```powershell
+python scripts/validar_wiki.py
+```
+
 El código de este proyecto fue generado con asistencia de inteligencia artificial.
