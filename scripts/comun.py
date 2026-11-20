@@ -64,7 +64,16 @@ NOMBRES_CAMPOS = {
     "firma": "Firma",
 }
 
-VACIOS = {"", "-", "--", "n/a", "na", "null", "none", "nan", "☐", "□", "☒", "☑"}
+VACIOS = {"", "-", "--", "n/a", "na", "null", "none", "nan", "☐", "□"}
+
+
+def quitar_acentos(valor: str) -> str:
+    return "".join(
+        caracter for caracter in unicodedata.normalize("NFKD", valor)
+        if not unicodedata.combining(caracter)
+    )
+
+
 _ALIAS_NORMALIZADOS = {
     normalizado: campo
     for campo, alias in ALIAS.items()
@@ -75,13 +84,6 @@ _COLUMNAS_LEGALES = (
     "aviso legal", "texto legal", "terminos y condiciones", "pie de pagina",
     "footer", "legal", "casilla", "checkbox",
 )
-
-
-def quitar_acentos(valor: str) -> str:
-    return "".join(
-        caracter for caracter in unicodedata.normalize("NFKD", valor)
-        if not unicodedata.combining(caracter)
-    )
 
 
 def normalizar(valor: Any) -> str:
@@ -99,7 +101,7 @@ def es_vacio(valor: Any) -> bool:
         except (TypeError, ValueError):
             pass
     texto = str(valor).strip()
-    return normalizar(texto) in VACIOS or bool(re.fullmatch(r"[☐□☒☑\s]+", texto))
+    return normalizar(texto) in VACIOS or bool(re.fullmatch(r"[☐□\s]+", texto))
 
 
 def texto(valor: Any) -> str:

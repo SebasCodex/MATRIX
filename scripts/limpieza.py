@@ -54,7 +54,11 @@ def procesar(ruta: Path, salida: Path, maximo: int | None) -> int:
     filas: list[tuple[str, list[tuple[str, str]], str, str]] = []
     for nombre_hoja, tabla in hojas:
         for numero_fila, (_, fila) in enumerate(tabla.iterrows(), start=2):
-            originales = [texto(valor) for valor in fila.tolist() if not es_vacio(valor)]
+            originales = [
+                f"{encabezado}: {texto(valor)}"
+                for encabezado, valor in fila.items()
+                if not es_vacio(valor)
+            ]
             if not originales:
                 continue
             campos: list[tuple[str, str]] = []
