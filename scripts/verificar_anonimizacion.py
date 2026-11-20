@@ -89,17 +89,22 @@ def verificar(directorio_fuentes: Path, directorio_privado: Path, raiz_wiki: Pat
         ruta for ruta in raiz_wiki.glob("wiki-*")
         if ruta.is_dir() and ruta != directorio_fuentes
     )
-    archivos = [archivo for raiz in raices for archivo in archivos_texto(raiz)]
+    archivos = [
+        (raiz, archivo)
+        for raiz in raices
+        for archivo in archivos_texto(raiz)
+    ]
     if not archivos:
         raise ValueError("No hay archivos de texto que verificar.")
     hallazgos: set[tuple[Path, str]] = set()
 
-    for archivo in archivos:
+    for raiz, archivo in archivos:
         contenido = archivo.read_text(encoding="utf-8")
-        normalizado = normalizar(contenido)
+        contenido_verificable = contenido + "\n" + archivo.relative_to(raiz).as_posix()
+        normalizado = normalizar(contenido_verificable)
         telefonos = {
             "".join(caracter for caracter in numero if caracter.isdigit())
-            for numero in telefonos_en(contenido)
+            for numero in telefonos_en(contenido_verificable)
         }
         for tipo, dato, metodo in candidatos:
             encontrado = dato in telefonos if metodo == "telefono" else dato in normalizado

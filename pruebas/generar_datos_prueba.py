@@ -59,13 +59,67 @@ def crear_exportacion(destino: Path, cantidad: int = 100) -> Path:
     return destino
 
 
+def crear_exportacion_repetida(
+    destino: Path,
+    reportes: list[tuple[str, bool]],
+) -> Path:
+    destino.parent.mkdir(parents=True, exist_ok=True)
+    registros = []
+    for reporte, con_serie in reportes:
+        registros.append({
+            "Número de reporte": reporte,
+            "Fecha": date(2026, 3, 14),
+            "Técnico": "Lucía Técnica Sintética",
+            "Cliente/Empresa": "Compañía de Prueba S.A.C.",
+            "Equipo (modelo)": "Bomba MX-200",
+            "Número de serie": "SN-CLIENTE-778899" if con_serie else "",
+            "Motivo": "Visita de María Contacto Sintética; equipo Bomba MX-200.",
+            "Revisión inicial": "Teléfono de prueba +51 987 654 321.",
+            "Procedimiento": "Escribir a persona.prueba@example.invalid.",
+            "Conclusión": "Verificar nuevamente en 42 días.",
+            "Recomendaciones": "Mantener Bomba MX-200 en servicio.",
+            "Repuestos": "Filtro sintético",
+            "Hora de llegada": "08:30",
+            "Hora de salida": "09:20",
+            "Garantía": "Sí",
+            "Facturado": "No",
+            "Teléfono": "+51 987 654 321",
+            "Contacto": "María Contacto Sintética",
+            "Dirección": "Av. Inventada 456, Lima",
+            "Firma": "Firma ficticia de María",
+            "Aviso legal": "Texto legal sintético que se descarta.",
+            "Pie de página": "Pie sintético que se descarta.",
+            "Casilla vacía": "□",
+        })
+    pd.DataFrame(registros).to_excel(destino, index=False)
+    return destino
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--salida", type=Path)
     parser.add_argument("--cantidad", type=int, default=100)
+    parser.add_argument(
+        "--escenario-anonimizacion",
+        action="store_true",
+        help="Genera dos exportaciones con el mismo cliente/equipo sintéticos.",
+    )
     opciones = parser.parse_args()
     if opciones.cantidad < 1:
         parser.error("--cantidad debe ser positivo.")
+    if opciones.escenario_anonimizacion:
+        destino = opciones.salida or Path(tempfile.mkdtemp(prefix="matrix-sintetico-"))
+        destino.mkdir(parents=True, exist_ok=True)
+        crear_exportacion_repetida(
+            destino / "exportacion_uno_sintetica.xlsx",
+            [("R-001905", True)],
+        )
+        crear_exportacion_repetida(
+            destino / "exportacion_dos_sintetica.xlsx",
+            [("R-001906", True), ("R-001907", False)],
+        )
+        print(f"Dos exportaciones sintéticas creadas en: {destino}")
+        return
     if opciones.salida:
         destino = opciones.salida
     else:
